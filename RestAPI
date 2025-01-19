@@ -1,0 +1,40 @@
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import org.json.JSONObject;
+
+public class WeatherApp {
+    public static void main(String[] args) {
+        String apiKey = "1a8c66a6ff06cd3e098f61d04886ab61";
+        String city = "London";
+        String urlString = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONObject myResponse = new JSONObject(response.toString());
+            JSONObject main = myResponse.getJSONObject("main");
+            double temperature = main.getDouble("temp");
+            double humidity = main.getDouble("humidity");
+
+            System.out.println("Weather in " + city + ":");
+            System.out.println("Temperature: " + temperature + "°C");
+            System.out.println("Humidity: " + humidity + "%");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Executed Successfully...");
+    }
+}
